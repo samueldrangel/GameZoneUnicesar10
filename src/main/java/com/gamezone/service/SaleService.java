@@ -1,45 +1,49 @@
 package com.gamezone.service;
 
-import com.gamezone.model.Accessory;
-import com.gamezone.model.Product;
 import com.gamezone.model.Customer;
+import com.gamezone.model.Product;
+import com.gamezone.model.Sale;
 import com.gamezone.model.Seller;
+import com.gamezone.persistence.SaleRepository;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 /**
- * Service managing sales operations, validation rules, and stock updates for products and accessories.
+ * Service layer for managing sales operations, business logic, and promotion integration.
  */
 public class SaleService {
+    private SaleRepository saleRepository;
+    private PromotionService promotionService;
     private ProductService productService;
-    private AccessoryService accessoryService;
+    private PersonService personService;
 
-    public SaleService(ProductService productService, AccessoryService accessoryService) {
+    public SaleService(SaleRepository saleRepository, PromotionService promotionService, ProductService productService, PersonService personService) {
+        this.saleRepository = saleRepository;
+        this.promotionService = promotionService;
         this.productService = productService;
-        this.accessoryService = accessoryService;
+        this.personService = personService;
     }
 
-    public boolean registerSale(String id, Customer customer, Seller seller, List<Product> purchasedItems) {
-        if (purchasedItems == null || purchasedItems.isEmpty()) {
-            return false;
+    public List<Sale> getAllSales() {
+        return saleRepository.loadAll(personService, productService);
+    }
+
+    /**
+     * Registers a new sale, automatically calculates totals, applies the best valid promotion, and persists it.
+     */
+    public Sale registerSale(Customer customer, Seller seller, List<Product> purchasedItems) {
+        String saleId = "SALE-" + UUID.randomUUID().toString().substring(0, 6).toUpperCase();
+        Sale sale = new Sale(saleId, LocalDate.now(), customer, seller, purchasedItems);
+
+        // Apply best promotion if available
+        if (promotionService != null) {
+            promotionService.applyBestPromotion(sale);
         }
 
-        // Validate stock for all items (products and accessories)
-        for (Product item : purchasedItems) {
-            if (item.getStock() <= 0) {
-                return false;
-            }
-        }
-
-        // Deduct inventory dynamically based on the item type
-        for (Product item : purchasedItems) {
-            if (item instanceof Accessory) {
-                accessoryService.updateStock(item.getId(), 1);
-            } else {
-                productService.updateStock(item.getId(), 1);
-            }
-        }
-
-        return true;
+        // Save to CSV persistence
+        saleRepository.saveSale(sale);
+        return sale;
     }
 }
