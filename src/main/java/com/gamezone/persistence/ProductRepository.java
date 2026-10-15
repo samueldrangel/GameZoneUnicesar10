@@ -1,10 +1,16 @@
 package com.gamezone.persistence;
 
-import com.gamezone.model.*;
+import com.gamezone.model.Product;
+import com.gamezone.model.VideoGame;
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
 
+/**
+ * Persistence for products.
+ * 
+ * @author Samuel David Rangel Martinez
+ */
 public class ProductRepository {
     private static final String FILE_PATH = "data/products.csv";
 
@@ -17,8 +23,8 @@ public class ProductRepository {
                     if (p instanceof VideoGame) {
                         VideoGame vg = (VideoGame) p;
                         writer.println("VIDEOGAME," + vg.getId() + "," + vg.getTitle() + "," + vg.getPrice() + "," + vg.getStock() + "," + vg.getPlatform() + "," + vg.getGenre() + "," + vg.getAgeRating());
-                    } else if (p instanceof Console) {
-                        Console c = (Console) p;
+                    } else if (p instanceof com.gamezone.model.Console) {
+                        com.gamezone.model.Console c = (com.gamezone.model.Console) p;
                         writer.println("CONSOLE," + c.getId() + "," + c.getTitle() + "," + c.getPrice() + "," + c.getStock() + "," + c.getBrand() + "," + c.getModel() + "," + c.getGeneration());
                     }
                 }
@@ -36,11 +42,11 @@ public class ProductRepository {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",");
-                if (parts.length < 5) continue;
-                if ("VIDEOGAME".equals(parts[0]) && parts.length >= 8) {
+                if (parts.length < 8) continue;
+                if ("VIDEOGAME".equals(parts[0])) {
                     products.add(new VideoGame(parts[1], parts[2], Double.parseDouble(parts[3]), Integer.parseInt(parts[4]), parts[5], parts[6], parts[7]));
-                } else if ("CONSOLE".equals(parts[0]) && parts.length >= 8) {
-                    products.add(new Console(parts[1], parts[2], Double.parseDouble(parts[3]), Integer.parseInt(parts[4]), parts[5], parts[6], parts[7]));
+                } else if ("CONSOLE".equals(parts[0])) {
+                    products.add(new com.gamezone.model.Console(parts[1], parts[2], Double.parseDouble(parts[3]), Integer.parseInt(parts[4]), parts[5], parts[6], parts[7]));
                 }
             }
         } catch (IOException | NumberFormatException e) {
