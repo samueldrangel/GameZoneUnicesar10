@@ -1,0 +1,5 @@
+CUSTOMER,CLI-001,Carlos Perez,3001234567,carlos.perez@email.com
+CUSTOMER,CLI-002,Maria Gomez,3109876543,maria.gomez@email.com
+SELLER,EMP-001,Samuel Rangel,3011112233,EMP01,Morning
+SELLER,EMP-002,Ana Torres,3024445566,EMP02,Afternoon
+SELLER,EMP-003,Luis Martinez,3035556677,EMP03,Night

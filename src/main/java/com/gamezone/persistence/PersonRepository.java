@@ -11,7 +11,7 @@ import java.util.*;
  * @author Samuel David Rangel Martinez
  */
 public class PersonRepository {
-    private static final String FILE_PATH = "data/persons.csv";
+    private final String FILE_PATH = "data/persons.csv";
 
     public void saveAll(List<Person> persons) {
         try {
