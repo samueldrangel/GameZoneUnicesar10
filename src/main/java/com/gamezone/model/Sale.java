@@ -1,12 +1,14 @@
 package com.gamezone.model;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /**
- * Represents a transaction sale in the store, supporting subtotal, items, and promotion discounts.
+ * Represents a transaction sale in the store, supporting date, subtotal, items, and promotion discounts.
  */
 public class Sale {
     private String id;
+    private LocalDate date;
     private Customer customer;
     private Seller seller;
     private List<Product> purchasedItems;
@@ -14,8 +16,9 @@ public class Sale {
     private double discountAmount;
     private double finalTotal;
 
-    public Sale(String id, Customer customer, Seller seller, List<Product> purchasedItems) {
+    public Sale(String id, LocalDate date, Customer customer, Seller seller, List<Product> purchasedItems) {
         this.id = id;
+        this.date = date != null ? date : LocalDate.now();
         this.customer = customer;
         this.seller = seller;
         this.purchasedItems = purchasedItems;
@@ -24,12 +27,24 @@ public class Sale {
         calculateTotals();
     }
 
+    public Sale(String id, Customer customer, Seller seller, List<Product> purchasedItems) {
+        this(id, LocalDate.now(), customer, seller, purchasedItems);
+    }
+
     public String getId() {
         return id;
     }
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
     }
 
     public Customer getCustomer() {
@@ -71,7 +86,7 @@ public class Sale {
 
     public void setDiscountAmount(double discountAmount) {
         this.discountAmount = discountAmount;
-        this.finalTotal = getSubtotal() - this.discountAmount;
+        calculateTotals();
     }
 
     /**
@@ -93,10 +108,13 @@ public class Sale {
     private void calculateTotals() {
         double subtotal = getSubtotal();
         this.finalTotal = subtotal - this.discountAmount;
+        if (this.finalTotal < 0) {
+            this.finalTotal = 0.0;
+        }
     }
 
     /**
-     * Generates a formatted receipt showing subtotal, applied discount, and final total.
+     * Generates a formatted receipt showing date, customer, seller, subtotal, applied discount, and final total.
      * 
      * @return formatted receipt string
      */
@@ -106,6 +124,9 @@ public class Sale {
         sb.append("         GAMEZONE UNICESAR RECEIPT      \n");
         sb.append("========================================\n");
         sb.append("Sale ID: ").append(id).append("\n");
+        sb.append("Date: ").append(date != null ? date.toString() : LocalDate.now()).append("\n");
+        if (customer != null) sb.append("Customer: ").append(customer.getName()).append("\n");
+        if (seller != null) sb.append("Seller: ").append(seller.getName()).append("\n");
         sb.append("Items Purchased:\n");
         if (purchasedItems != null) {
             for (Product p : purchasedItems) {
