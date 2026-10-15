@@ -22,6 +22,11 @@ public class AccessoryService {
         this.accessories = repository.loadAll();
     }
 
+    public AccessoryService() {
+    }
+    
+    
+
     public void registerController(String id, String title, double price, int stock, List<String> compatibleConsoles, String connectionType) {
         accessories.add(new Controller(id, title, price, stock, compatibleConsoles, connectionType));
         repository.saveAll(accessories);
