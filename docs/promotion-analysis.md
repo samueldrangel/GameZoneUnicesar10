@@ -1,0 +1,8 @@
+# Promotion Module Analysis - GameZoneUnicesar
+
+1. **Hierarchy Integration**: The three promotion types share common attributes and behaviors (id, name, startDate, endDate). This is reflected through an abstract base class `Promotion`, allowing code reuse and polymorphic handling where the system treats all discounts uniformly[cite: 3].
+2. **Abstract Method Mechanism**: The calculateDiscount method is declared as abstract in the `Promotion` base class because each promotion type computes its discount using a distinct rule. This enforces that every concrete subclass must provide its own implementation of the method, guaranteeing compile-time safety and polymorphism[cite: 3].
+3. **Business Rule Logic Location**: The logic to select the best promotion is located in `PromotionService`. This adheres to the layered architecture by placing business rules and algorithms in the service layer, keeping the domain model (`Sale`) focused on state and the UI (`ConsoleMenu`) focused on user interaction[cite: 3].
+4. **Sale and Receipt Modifications**: Adding `appliedPromotionName` and `discountAmount` to `Sale`, and updating `generateReceipt` to show the subtotal, applied discount name, and final total. These modifications are additive and do not break existing behavior since default sales without promotions will simply have zero discount.
+5. **Validity Validation**: The validity check (comparing the current date with start and end dates) is primarily implemented inside the `Promotion` class via the `isActive(LocalDate date)` method, and invoked by `PromotionService` to filter active promotions, maintaining clean separation of concerns[cite: 4].
+
