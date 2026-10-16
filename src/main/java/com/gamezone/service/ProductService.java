@@ -32,4 +32,17 @@ public class ProductService {
             repository.saveAll(products);
         }
     }
+    
+    /**
+     * Restores stock for a specific product and persists the change.
+     * @param productId the product ID
+     * @param quantity the quantity to restore
+     */
+    public void restoreStock(String productId, int quantity) {
+        Product product = findById(productId);
+        if (product != null) {
+            product.setStock(product.getStock() + quantity);
+            repository.saveAll(products);
+        }
+    }
 }
