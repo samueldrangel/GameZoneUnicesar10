@@ -31,6 +31,23 @@ public class SaleService {
     }
 
     /**
+     * Finds and returns a sale by its unique identifier.
+     * @param saleId the sale identifier
+     * @return the Sale object, or null if not found
+     */
+    public Sale getSaleById(String saleId) {
+        List<Sale> allSales = getAllSales();
+        if (allSales != null) {
+            for (Sale s : allSales) {
+                if (s.getId() != null && s.getId().equals(saleId)) {
+                    return s;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
      * Registers a new sale, automatically calculates totals, applies the best valid promotion, and persists it.
      */
     public Sale registerSale(Customer customer, Seller seller, List<Product> purchasedItems) {
