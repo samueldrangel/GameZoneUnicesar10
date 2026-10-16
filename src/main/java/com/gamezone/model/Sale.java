@@ -142,4 +142,18 @@ public class Sale {
         sb.append("========================================\n");
         return sb.toString();
     }
+    
+    /**
+     * Checks if the sale is within the 30-day return window from the current
+     * date.
+     *
+     * @return true if within 30 days, false otherwise
+     */
+    public boolean canBeReturned() {
+        if (this.date == null) {
+            return false;
+        }
+        long daysBetween = java.time.temporal.ChronoUnit.DAYS.between(this.date, LocalDate.now());
+        return daysBetween >= 0 && daysBetween <= 30;
+    }
 }
